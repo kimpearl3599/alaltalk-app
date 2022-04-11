@@ -93,7 +93,7 @@
         </div>
     </div>
 </div>
-<script src="{% static 'js/chat/reconnecting-websocket.js' %}"></script>
+<script defer src="{% static 'js/chat/reconnecting-websocket.js' %}"></script>
 <script type="module">
 
     $(document).ready(function () {
@@ -118,7 +118,7 @@
             window.location.href = `/accounts/mypage/`;
         });
 
-        // 채팅 이동
+        {#// 채팅 이동#}
         let ChatIcon = $(".chat_icon");
         ChatIcon.on('click', function () {
             window.location.href = `/chat/`;
@@ -130,7 +130,7 @@
     })
 
     var user_id = {{ user_id }};
-    var room_id = 140;
+    {#var room_id = 15;#}
 
     function getRoomid() {
         let all_partner = document.getElementsByClassName('chat_partner')
@@ -203,45 +203,7 @@
             }
         };
 
-        document.querySelector('#chat_message_input').onkeyup = function (e) {
-            if (e.keyCode === 13) {
-                let messageInputDom = document.querySelector('#chat_message_input');
-                let message = messageInputDom.value
-                message = message.replaceAll(/(\n|\r\n)/g, "<br>");
-                if (message === '' || message === null || message.trim().length === 0) {
-                    console.log('websocket load message')
-                    return true;
-                }
-                if (message.includes('alert') === true || message.includes('ALERT') === true) {
-                    console.log('XSS attack defenced!')
-                }
-                if (message.includes('script') === true || message.includes('SCRIPT') === true) {
-                    console.log('XSS attack defenced!')
-                } else {
-                    if (message.includes('href') === true) {
-                        console.log('XSS attack defenced!')
-                        const replace_msg = message.replace('href', '')
-                        socket.send(JSON.stringify({
-                            'command': 'new_messages',
-                            'message': replace_msg,
-                            'from': user_id,
-                            'room_id': room_id,
-                        }));
-                    } else {
-                        socket.send(JSON.stringify({
-                            'command': 'new_messages',
-                            'message': message,
-                            'from': user_id,
-                            'room_id': room_id,
-                        }));
-                    }
 
-                }
-                messageInputDom.value = '';
-
-            }
-            ;
-        }
 
         {#웹소켓 연결이 끊어졌을 때의 JS#}
         socket.onclose = function (e) {
